@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: REST API Spech Olshop Prototype
+  description: REST API Spech Olshop Prototype
+  contact:
+    name: Faridlan Nul Hakim
+    email: faridlannulhakim@gmail.com
+
+servers:
+  - description: REST API Olshop
+    url: http://localhost:8080/api
+
+paths:
+  /products:
+    post:
+      tags:
+        - products
+      summary: Post a product
+      description: Post a product to database
+      requestBody:
+        required: true
+        description: Request Body for post a product
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createOrUpdateProduct"
+      responses:
+        200:
+          description: Success Create a Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productResponse"
+    get:
+      tags:
+        - products
+      summary: Get list products
+      description: Get list products from database
+      parameters:
+        - name: page
+          in: query
+          description: page number (Default is 1)
+          required: false
+          schema:
+            type: number
+            example: 1
+        - name: limit
+          in: query
+          description: limit list products (Default is 10)
+          required: false
+          schema:
+            type: number
+            example: 10
+      responses:
+        200:
+          description: Success Get List Products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productResponses"
+
+  /products/{idProduct}:
+    get:
+      tags:
+        - products
+      summary: Get a product
+      description: Get a product from database
+      parameters:
+        - name: idProduct
+          in: path
+          description: use idProduct from get a product
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success Get a Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productResponse"
+
+    put:
+      tags:
+        - products
+      summary: Update Or Edit a product
+      description: Update Or Edit a product from database
+      parameters:
+        - name: idProduct
+          in: path
+          description: use idProduct for update a product
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Request Body for post a product
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createOrUpdateProduct"
+      responses:
+        200:
+          description: Success Update or Edit a Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productResponse"
+    delete:
+      tags:
+        - products
+      summary: Delete a product
+      description: Delete a product from database
+      parameters:
+        - name: idProduct
+          in: path
+          description: use idProduct for delete a product
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success Delete a Product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  status:
+                    type: string
+                    example: OK
+
+components:
+  # securitySchemes:
+  #   BasicAuth:
+  #     type: http
+  #     scheme: basic
+  schemas:
+    createOrUpdateProduct:
+      type: object
+      properties:
+        name:
+          type: string
+          example: ProductA
+        price:
+          type: integer
+          example: 99999
+        quantity:
+          type: integer
+          example: 99
+        image_url:
+          type: string
+          example: http://sg1.product.digitalocean.com/zzzzzz
+    productResponse:
+      type: object
+      properties:
+        code:
+          type: number
+        status:
+          type: string
+        data:
+          $ref: "#/components/schemas/product"
+    productResponses:
+      type: object
+      properties:
+        code:
+          type: number
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/product"
+    product:
+      type: object
+      properties:
+        id_product:
+          type: string
+          example: fa00099923hfjadkuieijj005
+        name:
+          type: string
+          example: ProductA
+        price:
+          type: integer
+          example: 99999
+        quantity:
+          type: integer
+          example: 99
+        image_url:
+          type: string
+          example: http://sg1.product.digitalocean.com/zzzzzz
+# security:
+#   - BasicAuth: []
