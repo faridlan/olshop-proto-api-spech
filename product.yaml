@@ -9,13 +9,13 @@ info:
 
 servers:
   - description: REST API Olshop
-    url: http://localhost:8080/api
+    url: http://159.223.72.43:3000/api
 
 paths:
   /products:
     post:
       tags:
-        - products
+        - Products
       summary: Post a product
       description: Post a product to database
       requestBody:
@@ -34,7 +34,7 @@ paths:
                 $ref: "#/components/schemas/productResponse"
     get:
       tags:
-        - products
+        - Products
       summary: Get list products
       description: Get list products from database
       parameters:
@@ -63,7 +63,7 @@ paths:
   /products/{idProduct}:
     get:
       tags:
-        - products
+        - Products
       summary: Get a product
       description: Get a product from database
       parameters:
@@ -73,6 +73,7 @@ paths:
           required: true
           schema:
             type: string
+            example: 08eea32bec0311ec9d4d0242ac130002
       responses:
         200:
           description: Success Get a Product
@@ -83,7 +84,7 @@ paths:
 
     put:
       tags:
-        - products
+        - Products
       summary: Update Or Edit a product
       description: Update Or Edit a product from database
       parameters:
@@ -93,6 +94,7 @@ paths:
           required: true
           schema:
             type: string
+            example: 08eea32bec0311ec9d4d0242ac130002
       requestBody:
         required: true
         description: Request Body for post a product
@@ -109,7 +111,7 @@ paths:
                 $ref: "#/components/schemas/productResponse"
     delete:
       tags:
-        - products
+        - Products
       summary: Delete a product
       description: Delete a product from database
       parameters:
@@ -133,6 +135,78 @@ paths:
                   status:
                     type: string
                     example: OK
+  
+  /image/products: 
+    post:
+      tags:
+        - "Upload Image"
+      summary: Upload An Image Of Product
+      description: Upload Image To Cloud Storage
+      requestBody:
+        required: true
+        description: Request Body for post a image product
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                productImage:
+                  type: string
+                  format: binary
+            encoding:
+              productImage:
+                contentType: image/png, image/jpeg
+      responses:
+        200:
+          description: Success Upload Image
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 200
+                  status:
+                    type: string
+                    example: OK
+                  data:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+  /seeder:
+    post:
+      tags:
+        - Seeder
+      summary: Seeder Product
+      description: Automate Insert To Table Products
+      responses:
+        200:
+          description: Success Insert Products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productResponses"
+    delete:
+      tags:
+        - Seeder
+      summary: Delete all products, except 1 product
+      description: Delete a product from database
+      responses:
+        200:
+          description: Success Delete Products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  status:
+                    type: string
+                    example: OK
 
 components:
   # securitySchemes:
@@ -145,23 +219,25 @@ components:
       properties:
         name:
           type: string
-          example: ProductA
+          example: ProductXXX
         price:
           type: integer
-          example: 99999
+          example: 999000
         quantity:
           type: integer
-          example: 99
+          example: 101
         image_url:
           type: string
-          example: http://sg1.product.digitalocean.com/zzzzzz
+          example: https://olshop-proto.sgp1.digitaloceanspaces.com/products/XVlBzgbaiC.png
     productResponse:
       type: object
       properties:
         code:
           type: number
+          example: 200
         status:
           type: string
+          example: OK
         data:
           $ref: "#/components/schemas/product"
     productResponses:
@@ -169,8 +245,10 @@ components:
       properties:
         code:
           type: number
+          example: 200
         status:
           type: string
+          example: OK
         data:
           type: array
           items:
@@ -192,6 +270,10 @@ components:
           example: 99
         image_url:
           type: string
-          example: http://sg1.product.digitalocean.com/zzzzzz
+          example: https://olshop-proto.sgp1.digitaloceanspaces.com/products/XVlBzgbaiC.png
+        created_at:
+          type: integer
+          example: 1655224794321
+          description: "Use Epoch Time, with Unix Milli Seconds"
 # security:
 #   - BasicAuth: []
